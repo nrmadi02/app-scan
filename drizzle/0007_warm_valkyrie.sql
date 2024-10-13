@@ -1,0 +1,1 @@
+ALTER TABLE "npwpd-app_taxpayers" ALTER COLUMN "npwpd_id" DROP NOT NULL;

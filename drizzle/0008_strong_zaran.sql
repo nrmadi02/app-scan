@@ -1,0 +1,1 @@
+ALTER TABLE "npwpd-app_user" RENAME COLUMN "name" TO "username";
