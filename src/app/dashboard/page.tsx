@@ -17,7 +17,7 @@ export default function DashboardPage() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const { mutateAsync, data, isPending } = api.auth.signInQR.useMutation({
+  const { mutateAsync, isPending } = api.auth.signInQR.useMutation({
     mutationKey: ["signInQR", Socket],
     onSuccess: (data) => {
       setIsOpen(false);
@@ -61,18 +61,16 @@ export default function DashboardPage() {
 
   return (
     <MobileLayout>
-      <div className="mt-5">
-        <h1>Dashboard</h1>
-        <Button onClick={() => signOut()}>Logout</Button>
-        <Button className="mt-5" onClick={() => setIsOpen(true)}>
+      <div className="mt-5 flex w-max flex-col">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p>Selamat datang di SSO Dashboard</p>
+        <Button className="w-max mt-2" onClick={() => signOut()}>Logout</Button>
+      </div>
+      <div className="h-[400px] w-full flex flex-col items-center justify-center">
+        <p className="text-xl font-bold">Scan QR Code from APP Client</p>
+        <Button className="mt-3" onClick={() => setIsOpen(true)}>
           Open QR Code Scanner
         </Button>
-        <div>
-          <h2>Generated QR Code</h2>
-          <div className="mt-2">
-            <pre>{data && JSON.stringify(data, null, 2)}</pre>
-          </div>
-        </div>
       </div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="w-[90%] rounded-md">
