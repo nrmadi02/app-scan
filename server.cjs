@@ -19,7 +19,13 @@ app.prepare().then(() => {
     handle(req, res, parsedUrl);
   });
 
-  const io = new Server(server);
+   const io = new Server(server, {
+     cors: {
+       origin: "*", 
+       methods: ["GET", "POST"], 
+       credentials: true,
+     },
+   });
 
   io.on("connection", (socket) => {
     console.log("Client connected:", socket.id);
