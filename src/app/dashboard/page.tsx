@@ -17,7 +17,7 @@ export default function DashboardPage() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const { mutateAsync, data } = api.auth.signInQR.useMutation({
+  const { mutateAsync, data, isPending } = api.auth.signInQR.useMutation({
     mutationKey: ["signInQR", Socket],
     onSuccess: (data) => {
       setIsOpen(false);
@@ -26,37 +26,38 @@ export default function DashboardPage() {
     },
     onError: (error) => {
       toast.error(error.message);
+      setIsOpen(false);
     },
   });
 
-  const handleSignInQR = async () => {
+  const handleSignInQR = async (code: string) => {
     await mutateAsync({
-      generatedCode: "APP-PAP-1a7e6b76-e2d3-4b79-a7ea-03664b48bafb",
+      generatedCode: code,
       userId: session.data?.user.id ?? "",
     });
   };
 
-   useEffect(() => {
-     socket = io();
-     socket.on("message", (msg) => {
-       console.log("Message from server:", msg);
-     });
-     socket.on("connect_error", (err) => {
-       console.error("Connection Error:", err);
-     });
+  useEffect(() => {
+    socket = io();
+    socket.on("message", (msg) => {
+      console.log("Message from server:", msg);
+    });
+    socket.on("connect_error", (err) => {
+      console.error("Connection Error:", err);
+    });
 
-     socket.on("connect", () => {
-       console.log("Connected to server");
-     });
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
 
-     socket.on("disconnect", () => {
-       console.log("Disconnected from server");
-     });
+    socket.on("disconnect", () => {
+      console.log("Disconnected from server");
+    });
 
-     return () => {
-       socket.disconnect();
-     };
-   }, []);
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   return (
     <MobileLayout>
@@ -77,9 +78,10 @@ export default function DashboardPage() {
         <DialogContent className="w-[90%] rounded-md">
           <h1 className="text-2xl font-bold">Scan QR Code</h1>
           <QrReader
+            isLoading={isPending}
             onSuccess={async (result) => {
               console.log(result.data);
-              await handleSignInQR();
+              await handleSignInQR(result.data);
             }}
           />
         </DialogContent>

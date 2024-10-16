@@ -6,9 +6,11 @@ import { useEffect, useRef, useState } from "react";
 
 import QrScanner from "qr-scanner";
 import Image from "next/image";
+import { LoaderIcon } from "lucide-react";
 
 const QrReader = (props: {
   onSuccess: (result: QrScanner.ScanResult) => void;
+  isLoading?: boolean;
 }) => {
   const scanner = useRef<QrScanner>();
   const videoEl = useRef<HTMLVideoElement>(null);
@@ -20,7 +22,7 @@ const QrReader = (props: {
 
     if (scanner.current) {
       scanner.current.stop();
-      scanner.current = undefined; 
+      scanner.current = undefined;
     }
   };
 
@@ -50,8 +52,8 @@ const QrReader = (props: {
         scanner?.current?.stop();
       }
     };
-    
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -63,24 +65,32 @@ const QrReader = (props: {
 
   return (
     <div className="qr-reader relative">
-      {/* QR */}
-      <video
-        className="rounded-[10px] border h-[300px] lg:h-[400px] border-gray-400"
-        style={{
-          width: "100%",
-          objectFit: "cover",
-        }}
-        ref={videoEl}
-      ></video>
-      <div ref={qrBoxEl} className="qr-box left-0 w-full">
-        <Image
-          src={"/images/qr-frame.svg"}
-          alt="_"
-          width={300}
-          height={300}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-none"
-        />
-      </div>
+      {props.isLoading && (
+        <div className="flex h-[300px] w-full items-center justify-center lg:h-[400px]">
+          <LoaderIcon className="h-20 w-20 animate-spin" />
+        </div>
+      )}
+      {!props.isLoading && (
+        <>
+          <video
+            className="h-[300px] rounded-[10px] border border-gray-400 lg:h-[400px]"
+            style={{
+              width: "100%",
+              objectFit: "cover",
+            }}
+            ref={videoEl}
+          ></video>
+          <div ref={qrBoxEl} className="qr-box left-0 w-full">
+            <Image
+              src={"/images/qr-frame.svg"}
+              alt="_"
+              width={300}
+              height={300}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 fill-none"
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 };
